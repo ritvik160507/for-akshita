@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Akshitaa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+html,body{width:100%;height:100%;background:black;overflow:hidden}
+
+/* PASSWORD */
+#lock{
+  position:fixed;inset:0;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:100;
+}
+#lock h1{color:white;margin-bottom:10px}
+#lock p{color:white;font-size:14px;margin-bottom:10px}
+#lock input{
+  padding:14px 22px;
+  border:none;border-radius:25px;
+  font-size:18px;text-align:center
+}
+
+/* SCENE */
+#scene{
+  position:fixed;inset:0;
+  background-size:cover;
+  background-position:center;
+}
+#catOverlay{
+  position:fixed;inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:.4;
+  display:none;
+}
+#dark{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+}
+
+/* TEXT */
+#text{
+  position:fixed;inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:6vw;
+  text-align:center;
+  color:white;
+  font-size:clamp(18px,4vw,28px);
+  line-height:1.6;
+  opacity:0;
+  transition:opacity 2s ease;
+  text-shadow:0 0 18px rgba(255,0,0,.6);
+  z-index:5;
+}
+
+/* FINAL */
+#final{
+  position:fixed;inset:0;
+  background:black;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(32px,6vw,64px);
+  color:red;
+  text-shadow:0 0 30px red;
+  z-index:50;
+}
+</style>
+</head>
+
+<body>
+
+<div id="lock">
+  <h1>💗 For Akshitaa 💗</h1>
+  <p>hint: a special date</p>
+  <input id="pass" type="password" placeholder="Enter password">
+</div>
+
+<div id="scene"></div>
+<div id="catOverlay"></div>
+<div id="dark"></div>
+<div id="text"></div>
+<div id="final">Forever missing you, Akshitaa 💔</div>
+
+<audio id="music" src="ishq.mp3"></audio>
+
+<script>
+const PASSWORD="150608";
+const music=document.getElementById("music");
+music.volume=0.7;
+
+const textSlides=[
+`Akshita, Kaise ho tum?
+Tabiyat theek rehti hai tumhari?
+Pata hai, yeh sawaal puchna
+aaj bhi kitna mushkil lagta hai…
+kyunki ab yeh sab
+main kisi aur se
+puch bhi nahi sakta.`,
+
+`Tumhari care karna
+meri aadat si thi.
+Aaj bhi kabhi-kabhi sochta hoon —
+khaana time pe khaya ya nahi,
+zyada thak toh nahi jaati,
+raat ko late tak
+jagti toh nahi ho.`,
+
+`13 September ke baad se
+sab kuch chal toh raha hai,
+par dil se
+kuch bhi theek nahi lagta.`,
+
+`Late nights sabse zyada
+yaad aati hain —
+woh video calls,
+tumhari awaaz,
+aur tumhare
+chhote-chhote nakhre
+jo meri duniya ka
+sabse sukoon bhara
+hissa the.`,
+
+`Shayad tum abhi
+samajh nahi paayi
+ki kaun tumse
+sach mein pyaar karta hai
+aur kaun nahi.`,
+
+`Mujhe pata hai
+tumhare paas
+bahut proposals aate honge…
+par apna partner
+soch-samajh ke chunnā.`,
+
+`Main kuch maangne
+nahi aaya hoon, Akshita…
+bas itna poochna tha —
+kaisi ho tum,
+sach mein?`,
+
+`Aur chahe tum
+jo bhi decide karo,
+bas yeh jaan lo —
+tumhari fikr
+aaj bhi utni hi hai.`
+];
+
+const scene=document.getElementById("scene");
+const text=document.getElementById("text");
+const catOverlay=document.getElementById("catOverlay");
+
+let slide=0;
+let imageIndex=1;
+
+/* UNLOCK */
+document.getElementById("pass").addEventListener("keydown",e=>{
+ if(e.key==="Enter" && e.target.value===PASSWORD){
+  document.getElementById("lock").style.display="none";
+  music.play();
+  showTextSlide();
+ }
+});
+
+/* TEXT SLIDES */
+function showTextSlide(){
+ if(slide>=textSlides.length){
+  startSlideshow();
+  return;
+ }
+
+ scene.style.backgroundImage=`url(photos/image${imageIndex}.jpg)`;
+
+ // CAT FULLSCREEN ON 2,4,6,8
+ if([1,3,5,7].includes(slide)){
+  catOverlay.style.backgroundImage=`url(cats/cat${(slide%4)+1}.png)`;
+  catOverlay.style.display="block";
+ }else{
+  catOverlay.style.display="none";
+ }
+
+ text.innerHTML=textSlides[slide];
+ text.style.opacity=0;
+
+ setTimeout(()=>text.style.opacity=1,200);
+
+ slide++;
+ imageIndex++;
+
+ setTimeout(showTextSlide,14000);
+}
+
+/* IMAGE SLIDESHOW */
+function startSlideshow(){
+ text.style.opacity=0;
+ catOverlay.style.display="none";
+
+ let i=imageIndex;
+ const s=setInterval(()=>{
+  scene.style.backgroundImage=`url(photos/image${i}.jpg)`;
+  i++;
+  if(i>21){
+   clearInterval(s);
+   endScene();
+  }
+ },4000);
+}
+
+/* FINAL */
+function endScene(){
+ let v=music.volume;
+ const f=setInterval(()=>{
+  v-=0.02;
+  music.volume=v;
+  if(v<=0) clearInterval(f);
+ },200);
+ document.getElementById("final").style.display="flex";
+}
+</script>
+
+</body>
+</html>
